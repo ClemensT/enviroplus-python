@@ -177,7 +177,7 @@ try:
 
                 st7735.display(img)
 
-                #r = requests.post(url = URL, data = data.__dict__)
+                r = requests.post(url = URL, data = data.__dict__)
 
                 print("works", json.dumps(data.__dict__))
                 print(readings)
