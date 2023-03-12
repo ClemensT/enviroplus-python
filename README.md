@@ -72,3 +72,6 @@ sudo apt install python3-numpy python3-smbus python3-pil python3-setuptools
 * GPIO Pinout - https://pinout.xyz/pinout/enviro_plus
 * Support forums - https://forums.pimoroni.com/c/support
 * Discord - https://discord.gg/hr93ByC
+
+
+Particulate.py contains the modified home version
