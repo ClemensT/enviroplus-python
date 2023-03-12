@@ -132,59 +132,75 @@ pms5003 = PMS5003()
 time.sleep(1.0)
 
 try:
+    uiCycleInit = 30
+    inputCycleInit = 1
+
+    inputCycle = inputCycleInit
+    uiCycle = uiCycleInit
+    maxV = 0
+
     while True:
-        try:
-            draw.rectangle((0, 0, WIDTH, HEIGHT), (0, 0, 0))
+        
+        if (uiCycle > 0):
+            uiCycle -= 1
+        else:
+            uiCycle = uiCycleInit
+            try:
+                draw.rectangle((0, 0, WIDTH, HEIGHT), (0, 0, 0))
 
-            readings = pms5003.read()
-            data = Pm()
-            data.p_1_0 = int(readings.pm_ug_per_m3(1.0))
-            data.p_2_5 = int(readings.pm_ug_per_m3(2.5))
-            data.pa_1_0 = int(readings.pm_ug_per_m3(1.0, True))
-            data.pa_2_5 = int(readings.pm_ug_per_m3(2.5, True))
-            data.p_10 = int(readings.pm_ug_per_m3(10.0))
+                readings = pms5003.read()
+                data = Pm()
+                data.p_1_0 = int(readings.pm_ug_per_m3(1.0))
+                data.p_2_5 = int(readings.pm_ug_per_m3(2.5))
+                data.pa_1_0 = int(readings.pm_ug_per_m3(1.0, True))
+                data.pa_2_5 = int(readings.pm_ug_per_m3(2.5, True))
+                data.p_10 = int(readings.pm_ug_per_m3(10.0))
 
-            maxV = getMax(data)
+                maxV = getMax(data)
 
- 
-            display_text("p 1   : %i" % (data.p_1_0), 0,10)
-            display_text("p 2.5 : %i" % (data.p_2_5), 0,30)
-            display_text("pa 1.0: %i" % (data.pa_1_0), 0,50)
-            display_text("pa 2.5: %i" % (data.pa_2_5), 80,10)
-            display_text("p 10  : %i" % (data.p_10), 80,30)
-            displayAirQuality(data)
-      
-            if (maxV > lastMax):
-                drawArrow(145,65, True)
-            else:
-                drawArrow(145,65, False)
-                
-            print("max %i"  % maxV)
+    
+                display_text("p 1   : %i" % (data.p_1_0), 0,10)
+                display_text("p 2.5 : %i" % (data.p_2_5), 0,30)
+                display_text("pa 1.0: %i" % (data.pa_1_0), 0,50)
+                display_text("pa 2.5: %i" % (data.pa_2_5), 80,10)
+                display_text("p 10  : %i" % (data.p_10), 80,30)
+                displayAirQuality(data)
+        
+                if (maxV > lastMax):
+                    drawArrow(145,65, True)
+                else:
+                    drawArrow(145,65, False)
+                    
+                print("max %i"  % maxV)
 
-            lastMax = maxV
+                lastMax = maxV
 
-            st7735.display(img)
+                st7735.display(img)
 
-            #r = requests.post(url = URL, data = data.__dict__)
+                #r = requests.post(url = URL, data = data.__dict__)
 
-            print("works", json.dumps(data.__dict__))
-            print(readings)
-            #logging.info(readings)
+                print("works", json.dumps(data.__dict__))
+                print(readings)
 
+            except ReadTimeoutError:
+                pms5003 = PMS5003()
+
+        if (inputCycle > 0):
+            inputCycle -= 1
+        else:
+            inputCycle = inputCycleInit
             prox = ltr559.get_proximity()
 
             if (prox > 2000):
                 displayOn = not displayOn 
-
             st7735.set_backlight(displayOn)
+            uiCycle = 0
+
+        if (maxV > 20):
+            st7735.set_backlight(True)
 
 
-            print("prox %f" % (prox))
-            time.sleep(2.0)
-
-            #time.sleep(30.0)
-
-        except ReadTimeoutError:
-            pms5003 = PMS5003()
+        time.sleep(1)
+        
 except KeyboardInterrupt:
     pass
