@@ -188,14 +188,18 @@ try:
         if (inputCycle > 0):
             inputCycle -= 1
         else:
-            inputCycle = inputCycleInit
-            prox = ltr559.get_proximity()
 
-            if (prox > 2000):
-                displayOn = not displayOn 
-            st7735.set_backlight(displayOn)
-            uiCycle = 0
+            try:
+                inputCycle = inputCycleInit
+                prox = ltr559.get_proximity()
 
+                if (prox > 2000):
+                    displayOn = not displayOn
+                    uiCycle = 0 
+                st7735.set_backlight(displayOn)
+            except:
+                print("proxmity error")
+            
         if (maxV > 20):
             st7735.set_backlight(True)
 
