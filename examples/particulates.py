@@ -182,7 +182,7 @@ try:
                 print("works", json.dumps(data.__dict__))
                 print(readings)
 
-            except ReadTimeoutError:
+            except pmsReadTimeoutError:
                 pms5003 = PMS5003()
 
         if (inputCycle > 0):
