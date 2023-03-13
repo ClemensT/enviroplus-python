@@ -115,6 +115,7 @@ class Pm:
     pa_1_0 = 0
     pa_2_5 = 0
     p_10 = 0
+    persist = 0
 
 
 logging.basicConfig(
@@ -132,11 +133,13 @@ pms5003 = PMS5003()
 time.sleep(1.0)
 
 try:
-    uiCycleInit = 30
+    uiCycleInit = 1
     inputCycleInit = 1
+    persistCycleInit = 30
 
     inputCycle = inputCycleInit
     uiCycle = uiCycleInit
+    persistCycle= persistCycleInit
     maxV = 0
 
     while True:
@@ -156,8 +159,13 @@ try:
                 data.pa_2_5 = int(readings.pm_ug_per_m3(2.5, True))
                 data.p_10 = int(readings.pm_ug_per_m3(10.0))
 
-                maxV = getMax(data)
+                if (persistCycle > 0):
+                    persistCycle -= 1
+                else:
+                    persistCycle = persistCycleInit
+                    data.persist = 1
 
+                maxV = getMax(data)
     
                 display_text("p 1   : %i" % (data.p_1_0), 0,10)
                 display_text("p 2.5 : %i" % (data.p_2_5), 0,30)
